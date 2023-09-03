@@ -8,17 +8,20 @@ def handle_client(client_socket):
             if not data:
                 break
             
-            parts = data.split(" ")
+            parts = data.strip().split(" ")  # Remova espaços em branco extras
             command = parts[0].lower()
             
             if command == "echo":
                 message = " ".join(parts[1:])
                 client_socket.send(message.encode("utf-8"))
-            elif command == "quit":
+                client_socket.send(b"\n")  # Adicione uma nova linha após a mensagem "echo"
+            elif command == "exit" or command == "quit":  # Reconhece "exit" ou "quit"
                 client_socket.send(b"Goodbye!")
-                break  # Encerra o loop quando o comando "quit" é recebido
+                break  # Encerra o loop quando o comando "exit" ou "quit" é recebido
             else:
                 client_socket.send(b"Unknown command")
+    except Exception as e:
+        print(f"Error: {e}")
     finally:
         client_socket.close()
 
